@@ -1,0 +1,18 @@
+version: 2
+
+models:
+  - name: store_products
+    responsible_owner: Eduardo Najibe  
+    description: "Silver transforemed dimension product table that consumes data from bronze layer"
+    columns:
+      - name: ProductId
+        description: "Foreign key for products"
+        data_type: int
+        constraints:
+          - type: foreign_key 
+          - type: not_null    
+        tests:
+          - not_null        
+          - unique
+
+          

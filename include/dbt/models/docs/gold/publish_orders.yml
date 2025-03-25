@@ -1,0 +1,49 @@
+version: 2
+
+models:
+  - name: publish_orders
+    responsible_owner: Eduardo Najibe
+    description: "Table with joined SalesOrderHeader and SalesOrderDetail data"
+    columns:
+      - name: SalesOrderID
+        description: "Unique identifier for each sales order."
+        tests:
+          - not_null
+      - name: OrderDate
+        description: "Date when the order was placed."
+        tests:
+          - not_null
+      - name: ShipDate
+        description: "Date when the order was shipped."
+        tests:
+          - not_null
+      - name: LeadTimeInBusinessDays
+        description: "The number of business days (excluding weekends) between OrderDate and ShipDate."
+      - name: Freight
+        description: "Total freight cost for the order."
+      - name: TotalLineExtendedPrice
+        description: "Total extended price for the line item (OrderQty * (UnitPrice - UnitPriceDiscount))."
+
+    tests:
+      - generic_test:
+          name: test_total_line_extended_price
+          query: |
+            SELECT *
+            FROM upstart-tech-test.gold.publish_orders
+            WHERE TotalLineExtendedPrice != OrderQty * (UnitPrice - UnitPriceDiscount)
+
+      - generic_test:
+          name: test_valid_sales_order_id
+          query: |
+            SELECT d.SalesOrderID
+            FROM upstart-tech-test.silver.store_sales_order_detail d
+            LEFT JOIN upstart-tech-test.silver.store_sales_order_header h
+              ON d.SalesOrderID = h.SalesOrderID
+            WHERE h.SalesOrderID IS NULL
+
+      - generic_test:
+          name: test_total_order_freight_non_negative
+          query: |
+            SELECT *
+            FROM upstart-tech-test.gold.publish_orders
+            WHERE TotalOrderFreight < 0

@@ -1,0 +1,11 @@
+version: 2
+
+models:
+  - name: raw_products
+    responsible_owner: Eduardo Najibe  
+    description: "Raw dimension product data order header data from source system"
+    columns:
+      - name: ProductId
+        data_type: string 
+        tests:
+          - not_null      

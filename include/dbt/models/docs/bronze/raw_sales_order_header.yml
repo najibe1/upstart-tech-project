@@ -1,0 +1,12 @@
+version: 2
+
+models:
+  - name: raw_sales_order_header
+    responsible_owner: Eduardo Najibe  
+    description: "Raw sales order header data from source system"
+    columns:
+      - name: SalesOrderID
+        data_type: string
+        tests:
+          - not_null         
+          - unique
