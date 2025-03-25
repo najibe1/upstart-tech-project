@@ -14,3 +14,4 @@ service_account.json
 include/dbt/target
 include/dbt/logs
 include/dbt/.user.yml
+terraform/infra/service_account_terraform.json
