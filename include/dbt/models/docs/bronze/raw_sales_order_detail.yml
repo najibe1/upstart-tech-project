@@ -1,0 +1,20 @@
+version: 2
+
+models:
+  - name: raw_sales_order_detail
+    responsible_owner: Eduardo Najibe  
+    description: "Raw sales order detail data from source system"
+    columns:
+      - name: SalesOrderDetailID
+        data_type: string
+        tests:
+          - not_null         
+          - unique
+      - name: ProductID
+        data_type: string
+        tests:
+          - not_null
+      - name: SalesOrderID
+        data_type: string
+        tests:
+          - not_null

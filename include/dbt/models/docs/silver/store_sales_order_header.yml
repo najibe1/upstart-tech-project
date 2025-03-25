@@ -1,0 +1,16 @@
+version: 2
+
+models:
+  - name: store_sales_order_header
+    responsible_owner: Eduardo Najibe  
+    description: "Silver transforemed sales order header table that consumes data from bronze layer"
+    columns:
+      - name: SalesOrderID
+        description: "Primary key for sales orders"
+        data_type: id
+        constraints:
+          - type: primary_key  
+          - type: not_null    
+        tests:
+          - not_null          
+          - unique            

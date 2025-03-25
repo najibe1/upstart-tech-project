@@ -1,0 +1,54 @@
+version: 2
+
+models:
+  - name: publish_products
+    responsible_owner: Eduardo Najibe
+    description: "Transformed product data with updated categories and color handling."
+    columns:
+      - name: ProductId
+        description: "Unique identifier for each product."
+        tests:
+          - not_null
+      - name: ProductDesc
+        description: "Description of the product."
+      - name: ProductNumber
+        description: "Product number."
+      - name: MakeFlag
+        description: "Flag indicating whether the product is made in-house."
+      - name: Color
+        description: "Color of the product. 'N/A' if the color is empty."
+      - name: SafetyStockLevel
+        description: "Safety stock level for the product."
+      - name: ReorderPoint
+        description: "Reorder point for the product."
+      - name: StandardCost
+        description: "Standard cost of the product."
+      - name: ListPrice
+        description: "List price of the product."
+      - name: Size
+        description: "Size of the product."
+      - name: SizeUnitMeasureCode
+        description: "Unit of measure code for the product size."
+      - name: Weight
+        description: "Weight of the product."
+      - name: WeightUnitMeasureCode
+        description: "Unit of measure code for the product weight."
+      - name: ProductCategoryName
+        description: "Category of the product, updated based on subcategory."
+      - name: ProductSubCategoryName
+        description: "Subcategory of the product."
+
+    tests:
+      - generic_test:
+          name: test_color_not_null
+          query: |
+            SELECT *
+            FROM upstart-tech-test.gold.publish_products
+            WHERE Color IS NULL
+
+      - generic_test:
+          name: test_standard_cost_non_negative
+          query: |
+            SELECT *
+            FROM upstart-tech-test.gold.publish_products
+            WHERE StandardCost < 0

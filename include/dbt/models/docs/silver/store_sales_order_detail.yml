@@ -1,0 +1,36 @@
+version: 2
+
+models:
+  - name: store_sales_order_detail
+    responsible_owner: Eduardo Najibe  
+    description: "Silver transformed sales order detail table that consumes data from the bronze layer"
+    columns:
+      - name: SalesOrderDetailID
+        description: "Primary key for the sales order detail"
+        data_type: int
+        constraints:
+          - type: primary_key  
+          - type: not_null    
+        tests:
+          - not_null
+          - unique
+        
+      - name: SalesOrderID
+        description: "Foreign key that links to the sales order header"
+        data_type: int
+        constraints:
+          - type: foreign_key
+            to: ref('store_sales_order_header')
+            to_columns: [SalesOrderID]
+        tests:
+          - not_null
+          
+      - name: ProductID
+        description: "Foreign key that links to the product table"
+        data_type: int
+        constraints:
+          - type: foreign_key
+            to: ref('store_products')
+            to_columns: [ProductID]
+        tests:
+          - not_null

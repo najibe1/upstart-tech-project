@@ -1,12 +1,12 @@
-retail:
+dbt_upstart:
  target: dev
  outputs:
   dev:
     type: bigquery
     method: service-account
     keyfile: /usr/local/airflow/include/gcp/service_account.json
-    project: 'airflow-dbt-soda-pipeline'
-    dataset: retail
+    project: 'upstart-tech-test'
+    dataset: dummy
     threads: 1
     timeout_seconds: 300
     location: US
