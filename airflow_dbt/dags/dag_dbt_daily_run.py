@@ -1,29 +1,39 @@
 from airflow.decorators import dag, task
-from datetime import datetime
+from datetime import datetime, timedelta
 from include.dbt.cosmos_config import DBT_PROJECT_CONFIG, DBT_CONFIG
 from cosmos.airflow.task_group import DbtTaskGroup
 from cosmos.constants import LoadMode
 from cosmos.config import ProjectConfig, RenderConfig
-from airflow.models.baseoperator import chain
 from airflow.operators.dummy import DummyOperator
 from airflow.providers.google.cloud.transfers.s3_to_gcs import S3ToGCSOperator
-from airflow.exceptions import AirflowException
-
+from airflow.utils.task_group import TaskGroup
 
 @dag(
-    start_date=datetime(2024, 7, 7),
+    start_date=datetime(2025, 7, 24),
     schedule=None,
     catchup=False,
+    tags=['dbt', 'daily_run'],
+    default_args={
+        'retries': 2,
+        'retry_delay': timedelta(minutes=5),
+        'execution_timeout': timedelta(hours=2),
+    }
 )
 def dbt_daily_run():
 
-    # Operador para garantir o início da execução
+
     start = DummyOperator(task_id='start')
 
 
+    s3_to_gcs_transfer = S3ToGCSOperator(
+        task_id='s3_to_gcs_transfer',
+        bucket='upstart-bucket',
+        aws_conn_id='my_aws_conn',
+        gcp_conn_id='db_conn',
+        dest_gcs='gs://s3-external-files-bucket/external_data/',
+        replace=True
+    )
 
-
-    # Definir os task groups para os modelos
     bronze = DbtTaskGroup(
         group_id='bronze',
         project_config=DBT_PROJECT_CONFIG,
@@ -54,30 +64,9 @@ def dbt_daily_run():
         )
     )
 
-    datamart = DbtTaskGroup(
-        group_id='datamart',
-        project_config=DBT_PROJECT_CONFIG,
-        profile_config=DBT_CONFIG,
-        render_config=RenderConfig(
-            load_method=LoadMode.DBT_LS,
-            select=['path:models/datamart']
-        )
-    )
+    end = DummyOperator(task_id='end')
 
 
-    # Estabelecer dependências para execução sequencial respeitando a lineage
-    start >> bronze >> silver >> gold >> datamart 
-
-    # Adicionando as dependências para a execução dos testes após os modelos
-
-
-    # Acessando as tarefas dentro de cada task group e aplicando o on_failure_callback
-    for task_group in [bronze, silver, gold]:
-        for task in task_group:
-            task.on_failure_callback = lambda context: None  # Não interromper a DAG
-
-    # Garantir que a execução dos testes aconteça depois dos modelos
-    chain(bronze, silver, gold, datamart)
-
+    start >> s3_to_gcs_transfer >> bronze >> silver >> gold >> end
 
 dbt_daily_run()
