@@ -15,5 +15,6 @@ include/dbt/target
 include/dbt/logs
 include/dbt/.user.yml
 
-include/dbt/logs/dbt.log
-include/dbt/target/manifest.json
+airflow_dbt/include/dbt/logs/dbt.log
+airflow_dbt/include/dbt/logs/dbt.log
+terraform/infra/service_account_terraform.json
