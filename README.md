@@ -8,49 +8,57 @@ This project implements a complete data pipeline that extracts raw data from AWS
 
 ![Data Architecture](docs/data_architecture.png)
 
+
+## Table of Contents
+1. [Technical Implementation](#technical-implementation)
+2. [Data Model Documentation](#data-model-documentation)
+3. [Pipeline Layers](#pipeline-layers)
+   - [Bronze](#bronze-models)
+   - [Silver](#silver-models)
+   - [Gold](#gold-models)
+   - [Datamart](#datamart-models)
+4. [Key Business Logic](#key-business-logic)
+5. [Orchestration](#orchestration)
+6. [Future Enhancements](#future-enhancements)
+
 ## Technical Implementation
 
-### 1. Data Ingestion Process
-- **Source Data**: Manually loaded CSV files into AWS S3 bucket to simulate external data sources
+### Data Ingestion Process
+- **Source Data**: CSV files loaded into AWS S3 bucket
 - **Transfer Mechanism**: 
-  - Custom-built Airflow operator handles S3-to-GCS transfers
-  - Configured service accounts and permissions via Terraform
+  - Custom Airflow operator for S3-to-GCS transfers
+  - Terraform-configured service accounts
 
-### 2. Local Development
+### Local Development
 - **Docker Containers**:
   - Airflow (Astro) 1.33.2
   - DBT Core 1.9.3 + BigQuery Plugin (1.9.1)
- 
 
-### 2.1 GCP Infrastructure
-- **Storage**: 
-  - GCS buckets provisioned with Terraform
-- **Data Catalog**: 
-  - BigQuery external tables pointing to GCS files
-- **Security**:
-  - Fine-grained IAM roles for service accounts
-  - Network access restrictions
+### GCP Infrastructure
+- **Storage**: Terraform-provisioned GCS buckets
+- **Data Catalog**: BigQuery external tables
+- **Security**: Fine-grained IAM roles
 
 
-### 3. Data Transformation Pipeline
-**Medallion Architecture Implementation**:
+## Pipeline Layers
 
-| Layer       | Naming Prefix | Description                                                                 |
-|-------------|---------------|-----------------------------------------------------------------------------|
-| **Bronze**  | `raw_`        | Preserves source data exactly as received                                   |
-| **Silver**  | `store_`      | Cleaned data with:<br>- Standardized formats<br>- Null handling<br>- FK/PK relations |
-| **Gold**    | `publish_`    | Business-ready aggregates and derived metrics                               |
-| **Datamart**|               | Analytical views answering specific business questions                      |
+### Medallion Architecture
 
+| Layer       | Prefix    | Description                          | Owner           |
+|-------------|-----------|--------------------------------------|-----------------|
+| **Bronze**  | `raw_`    | Raw source data preservation         | Eduardo Najibe  |
+| **Silver**  | `store_`  | Cleaned, typed data with constraints | Eduardo Najibe  |
+| **Gold**    | `publish_`| Business-ready aggregates            | Eduardo Najibe  |
+| **Datamart**|           | Analytical views                     | Eduardo Najibe  |
 
 
 ### Bronze Models Overview
 
   ### Design Philosophy
-  - **Immutable Storage**: Preserves raw source data exactly as ingested
-  - **Lightweight Processing**: Only applies deduplication (if needed) and adds metadata
-  - **Source Alignment**: Maintains 1:1 field mapping with origin systems
-  - **Pipeline Metadata**: Adds tracking columns for data lineage
+  - Immutable raw data preservation
+  - Lightweight processing
+  - Source-aligned schema
+  - Added metadata columns
 
   #### File Paths Configuration
   File path of the models and tests related to these models inside the Github project:
@@ -170,10 +178,11 @@ FROM {{ source('EXT_S3_FILES', 'src_sales_order_header') }}
 ### Silver Models Overview
 
 ### Design Philosophy
-- **Curated Data**: Applies business logic and standardization
-- **Data Transformation**: Performs data type conversions and applies consistent formatting and cleansing to column values 
-- **Data Quality**: Enforces data integrity through constraints, validations, and quality checks to ensure reliable outputs
-- **Traceability**: Maintains complete lineage from source systems to transformed datasets, ensuring full auditability
+- Data standardization
+- Type conversions
+- Constraint enforcement
+- Complete lineage tracking
+
 
 #### File Paths Configuration
 File path of the models and tests related to these models inside the Github project:
@@ -291,11 +300,10 @@ FROM {{ ref('raw_sales_order_header') }}
 ### Gold Models Overview
 
 ### Design Philosophy
-- **Business Metrics**: Calculates key performance indicators and derived metrics
-- **Analytical Ready**: Structures data for direct consumption by BI tools and analysts
-- **Performance Optimized**: Clustered for common query patterns
-- **Business Logic**: Encodes domain-specific calculations (e.g., business days)
-- **Simplified Consumption**: Joins related entities into analytical datasets
+- Business metric calculation
+- Query-optimized structure
+- Domain logic implementation
+- Simplified consumption
 
 #### File Paths Configuration
 File path of the models and tests related to these models inside the Github project:
@@ -402,10 +410,11 @@ FROM {{ ref('store_products') }}
 ## Datamart Models Overview
 
 ### Design Philosophy
-- **Business-Focused**: Answers specific analytical questions
-- **Simplified Access**: Provides ready-to-use metrics for business users
-- **Optimized for Consumption**: Materialized as views for real-time data
-- **Self-Documenting**: Clear metric definitions and calculations
+- Business question-focused
+- Self-documenting
+- Real-time optimized
+- Metric clarity
+
 
 #### File Paths Configuration
 ```yaml
@@ -470,6 +479,42 @@ SELECT *
 FROM year_color_revenue_cte
 QUALIFY RANK() OVER (PARTITION BY Year ORDER BY Revenue DESC) = 1
 ```
+
+## Table Relationships and Key Constraints
+
+
+| Table                      | Column               | Type | Constraints       | References                     |
+|----------------------------|----------------------|------|-------------------|--------------------------------|
+| `store_products`           | `ProductId`          | INT  | Primary Key       |                                |
+| `store_sales_order_detail` | `SalesOrderDetailID` | INT  | Primary Key       |                                |
+| `store_sales_order_detail` | `SalesOrderID`       | INT  | Foreign Key, Not Null | `store_sales_order_header.SalesOrderID` |
+| `store_sales_order_detail` | `ProductID`          | INT  | Foreign Key, Not Null | `store_products.ProductId`     |
+| `store_sales_order_header` | `SalesOrderID`       | INT   | Primary Key       |                                |
+
+### Constraint Notes:
+1. All primary keys are automatically `NOT NULL` and `UNIQUE`
+2. Foreign key columns enforce referential integrity
+3. `NOT NULL` constraints ensure data completeness
+
+## 🔗 Relationship Diagram
+
+```mermaid
+erDiagram
+    store_products {
+        int ProductId PK
+    }
+    store_sales_order_header {
+        int SalesOrderID PK
+    }
+    store_sales_order_detail {
+        int SalesOrderDetailID PK
+        int SalesOrderID FK
+        int ProductID FK
+    }
+    store_sales_order_header ||--o{ store_sales_order_detail : "1-to-many"
+    store_products ||--o{ store_sales_order_detail : "1-to-many"
+```
+
 
 ### 4. Key Business Logic Implementations
 
@@ -543,3 +588,7 @@ QUALIFY RANK() OVER (PARTITION BY Year ORDER BY Revenue DESC) = 1
 - **Trusted Data Foundation**: Rigorous quality checks
 - **Actionable Insights**: Ready-to-use analytical views
 - **Extensible Framework**: Designed for future growth
+
+
+
+  
