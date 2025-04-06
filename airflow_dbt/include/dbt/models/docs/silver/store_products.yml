@@ -6,10 +6,10 @@ models:
     description: "Silver transforemed dimension product table that consumes data from bronze layer"
     columns:
       - name: ProductId
-        description: "Foreign key for products"
+        description: "Primary key for products"
         data_type: int
         constraints:
-          - type: foreign_key 
+          - type: primary_key 
           - type: not_null    
         tests:
           - not_null        
