@@ -6,6 +6,7 @@ This project implements a complete data pipeline that extracts raw data from AWS
 
 ## Data Architecture
 
+![Data Architecture](docs/data_architecture.png)
 
 ## Technical Implementation
 
