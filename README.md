@@ -11,13 +11,13 @@ This project implements a complete data pipeline that extracts raw data from AWS
 
 ## Table of Contents
 1. [Technical Implementation](#technical-implementation)
-2. [Data Model Documentation](#data-model-documentation)
-3. [Pipeline Layers](#pipeline-layers)
-   - [Bronze](#bronze-models)
-   - [Silver](#silver-models)
-   - [Gold](#gold-models)
-   - [Datamart](#datamart-models)
-4. [Key Business Logic](#key-business-logic)
+2. [Pipeline Layers](#pipeline-layers)
+   - [Bronze](#bronze-models-overview)
+   - [Silver](#silver-models-overview)
+   - [Gold](#gold-models-overview)
+   - [Datamart](#datamart-models-overview)
+3. [Table Relationships and Key Constraints](#table-relationships-and-key-constraints)
+4. [CI/CD Workflow: DAG Deployment to Cloud Composer](#cicd-workflow-dag-deployment-to-cloud-composer)
 5. [Orchestration](#orchestration)
 6. [Future Enhancements](#future-enhancements)
 
@@ -516,7 +516,42 @@ erDiagram
 ```
 
 
-### 4. Key Business Logic Implementations
+## CI/CD Workflow: DAG Deployment to Cloud Composer
+
+### Overview
+This workflow automates the deployment of Airflow DAGs from the `main` branch to Google Cloud Composer whenever changes are pushed.
+
+### Workflow File: `.github/workflows/deploy_dags.yaml`
+
+```yaml
+name: Deploy DAGs to Composer
+
+on:
+  push:
+    branches:
+      - main  
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0
+        with:
+          project_id: upstart-tech-test
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
+
+      - name: Deploy DAGs to Composer GCS bucket
+        run: |
+          gsutil cp airflow_dbt/dags/*.py gs://us-central1-airflow-upstart-d3f60ca0-bucket/dags/
+```
+
+## Key Business Logic Implementations
 
 **Product Data Enhancements**:
 - Standardized empty color values to 'N/A'
@@ -528,7 +563,7 @@ erDiagram
 - Computed line item totals with proper discount application
 - Joined header and detail tables with referential integrity checks
 
-### 5. Orchestration
+## Orchestration
 - **Airflow DAG** schedules daily pipeline runs with:
   1. File transfer from S3 to GCS
   2. DBT model execution (bronze → silver → gold)
