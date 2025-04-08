@@ -3,7 +3,7 @@
 
 ##bucket to store all the files provided by s3
 resource "google_storage_bucket" "s3_files_bucket" {
-    name          = "s3-external-files-bucket"
+    name          = "s3-external-files-bucket-gcs"
     location      = "US"
 }
 
@@ -24,7 +24,7 @@ resource "google_bigquery_table" "external_products_table" {
   external_data_configuration {
     autodetect    = false  
     source_format = "CSV"
-    source_uris   = ["gs://${google_storage_bucket.s3_files_bucket.name}/external_data/products-1-.csv"]
+    source_uris   = ["gs://${google_storage_bucket.s3_files_bucket.name}/external_data/data/products-1-.csv"]
 
     csv_options {
       quote                 = "\""
@@ -124,7 +124,7 @@ resource "google_bigquery_table" "external_sales_order_header_table" {
   external_data_configuration {
     autodetect    = false  
     source_format = "CSV"
-    source_uris   = ["gs://${google_storage_bucket.s3_files_bucket.name}/external_data/sales-order-header-1-.csv"]
+    source_uris   = ["gs://${google_storage_bucket.s3_files_bucket.name}/external_data/data/sales-order-header-1-.csv"]
 
     csv_options {
       quote                 = "\""
@@ -200,7 +200,7 @@ resource "google_bigquery_table" "external_sales_order_detail_table" {
     }
 
     source_uris = [
-      "gs://${google_storage_bucket.s3_files_bucket.name}/external_data/sales-order-detail-1-.csv",
+      "gs://${google_storage_bucket.s3_files_bucket.name}/external_data/data/sales-order-detail-1-.csv",
     ] 
 
     schema = <<EOF

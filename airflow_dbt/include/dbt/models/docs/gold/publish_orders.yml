@@ -29,15 +29,15 @@ models:
           name: test_total_line_extended_price
           query: |
             SELECT *
-            FROM upstart-tech-test.gold.publish_orders
+            FROM upstart-technical-project.gold.publish_orders
             WHERE TotalLineExtendedPrice != OrderQty * (UnitPrice - UnitPriceDiscount)
 
       - generic_test:
           name: test_valid_sales_order_id
           query: |
             SELECT d.SalesOrderID
-            FROM upstart-tech-test.silver.store_sales_order_detail d
-            LEFT JOIN upstart-tech-test.silver.store_sales_order_header h
+            FROM upstart-technical-project.silver.store_sales_order_detail d
+            LEFT JOIN upstart-technical-project.silver.store_sales_order_header h
               ON d.SalesOrderID = h.SalesOrderID
             WHERE h.SalesOrderID IS NULL
 
@@ -45,5 +45,5 @@ models:
           name: test_total_order_freight_non_negative
           query: |
             SELECT *
-            FROM upstart-tech-test.gold.publish_orders
+            FROM upstart-technical-project.gold.publish_orders
             WHERE TotalOrderFreight < 0

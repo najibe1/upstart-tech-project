@@ -542,7 +542,7 @@ jobs:
       - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v0
         with:
-          project_id: upstart-tech-test
+          project_id: upstart-technical-project
           service_account_key: ${{ secrets.GCP_SA_KEY }}
           export_default_credentials: true
 

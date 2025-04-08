@@ -5,7 +5,7 @@ dbt_upstart:
     type: bigquery
     method: service-account
     keyfile: /usr/local/airflow/include/gcp/service_account.json
-    project: 'upstart-tech-test'
+    project: upstart-technical-project
     dataset: dummy
     threads: 1
     timeout_seconds: 300

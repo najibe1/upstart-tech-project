@@ -9,7 +9,7 @@ from airflow.providers.google.cloud.transfers.s3_to_gcs import S3ToGCSOperator
 from airflow.utils.task_group import TaskGroup
 
 @dag(
-    start_date=datetime(2025, 7, 24),
+    start_date=datetime(2024, 7, 24),
     schedule=None,
     catchup=False,
     tags=['dbt', 'daily_run'],
@@ -30,7 +30,8 @@ def dbt_daily_run():
         bucket='upstart-bucket',
         aws_conn_id='my_aws_conn',
         gcp_conn_id='db_conn',
-        dest_gcs='gs://s3-external-files-bucket/external_data/',
+        dest_gcs='gs://s3-external-files-bucket-gcs/external_data/',
+        apply_gcs_prefix=True,
         replace=True
     )
 

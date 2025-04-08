@@ -43,12 +43,12 @@ models:
           name: test_color_not_null
           query: |
             SELECT *
-            FROM upstart-tech-test.gold.publish_products
+            FROM upstart-technical-project.gold.publish_products
             WHERE Color IS NULL
 
       - generic_test:
           name: test_standard_cost_non_negative
           query: |
             SELECT *
-            FROM upstart-tech-test.gold.publish_products
+            FROM upstart-technical-project.gold.publish_products
             WHERE StandardCost < 0

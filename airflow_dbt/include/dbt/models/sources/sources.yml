@@ -2,7 +2,7 @@ version: 2
 
 sources:
   - name: EXT_S3_FILES
-    database: upstart-tech-test
+    database: upstart-technical-project
     tables:
     - name: src_products
     - name: src_sales_order_detail
