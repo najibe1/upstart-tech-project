@@ -548,7 +548,7 @@ jobs:
 
       - name: Deploy DAGs to Composer GCS bucket
         run: |
-          gsutil cp airflow_dbt/dags/*.py gs://us-central1-airflow-upstart-d3f60ca0-bucket/dags/
+          gsutil cp airflow_dbt/dags/*.py gs://composer-upstart/dags
 ```
 
 ## Key Business Logic Implementations
