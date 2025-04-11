@@ -1,6 +1,6 @@
 from airflow.decorators import dag, task
 from datetime import datetime, timedelta
-from plugins.cosmos_config import DBT_PROJECT_CONFIG, DBT_CONFIG
+from cosmos_config import DBT_PROJECT_CONFIG, DBT_CONFIG
 from cosmos.airflow.task_group import DbtTaskGroup
 from cosmos.constants import LoadMode
 from cosmos.config import ProjectConfig, RenderConfig
