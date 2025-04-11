@@ -1,12 +1,3 @@
-import os 
-import sys 
-
-
-if os.environ.get("ENV_TYPE") == "LOCAL":
-    sys.path.append(os.path.abspath("."))
-else:
-    sys.path.append("/home/airflow/gcs/")
-
 from airflow.decorators import dag, task
 from datetime import datetime, timedelta
 from data.dbt.cosmos_config import DBT_PROJECT_CONFIG, DBT_CONFIG
