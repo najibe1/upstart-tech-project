@@ -1,13 +1,29 @@
 from airflow.decorators import dag, task
 from datetime import datetime, timedelta
-from cosmos_config import DBT_PROJECT_CONFIG, DBT_CONFIG
 from cosmos.airflow.task_group import DbtTaskGroup
 from cosmos.constants import LoadMode
 from cosmos.config import ProjectConfig, RenderConfig
 from airflow.operators.dummy import DummyOperator
 from airflow.providers.google.cloud.transfers.s3_to_gcs import S3ToGCSOperator
 from airflow.utils.task_group import TaskGroup
+from cosmos.config import ProfileConfig, ProjectConfig
+from pathlib import Path
+import os
 
+if os.environ.get("ENV_TYPE") == "LOCAL":
+    base_path = Path("/usr/local/airflow/data/dbt/")
+else:
+    base_path = Path("/home/airflow/gcs/data/dbt/")
+
+DBT_CONFIG = ProfileConfig(
+    profile_name='dbt_upstart',
+    target_name='dev',
+    profiles_yml_filepath=base_path / "profiles.yml"
+)
+
+DBT_PROJECT_CONFIG = ProjectConfig(
+    dbt_project_path=str(base_path),
+)
 
 
 @dag(
