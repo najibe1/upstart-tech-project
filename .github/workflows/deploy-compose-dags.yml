@@ -23,4 +23,4 @@ jobs:
       - name: Deploy DAGs and data folders to Composer GCS bucket
         run: |
           gsutil cp airflow_dbt/dags/*.py gs://composer-upstart/dags
-          gsutil -m cp -r airflow_dbt/data gs://composer-upstart/data
+          gsutil -m cp -r airflow_dbt/data/* gs://composer-upstart/data
