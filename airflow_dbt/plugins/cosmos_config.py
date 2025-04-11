@@ -3,9 +3,9 @@ from pathlib import Path
 import os
 
 if os.environ.get("ENV_TYPE") == "LOCAL":
-    base_path = Path("/usr/local/airflow/plugins/dbt/")
+    base_path = Path("/usr/local/airflow/data/dbt/")
 else:
-    base_path = Path("/home/airflow/gcs/plugins/dbt/")
+    base_path = Path("/home/airflow/gcs/data/dbt/")
 
 DBT_CONFIG = ProfileConfig(
     profile_name='dbt_upstart',
