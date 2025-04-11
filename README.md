@@ -64,12 +64,12 @@ This project implements a complete data pipeline that extracts raw data from AWS
   File path of the models and tests related to these models inside the Github project:
   ```yaml
   models:
-    bronze: "airflow_dbt/include/dbt/models/bronze"
+    bronze: "airflow_dbt/data/dbt/models/bronze"
       - raw_products.sql
       - raw_sales_order_detail.sql
       - raw_sales_order_header.sql
   tests:
-    bronze: "airflow_dbt/include/dbt/models/docs/bronze"
+    bronze: "airflow_dbt/data/dbt/models/docs/bronze"
       - raw_products.yml
       - raw_sales_order_detail.yml
       - raw_sales_order_header.yml
@@ -188,12 +188,12 @@ FROM {{ source('EXT_S3_FILES', 'src_sales_order_header') }}
 File path of the models and tests related to these models inside the Github project:
 ```yaml
 models:
-  silver: "airflow_dbt/include/dbt/models/silver"
+  silver: "airflow_dbt/data/dbt/models/silver"
     - store_products.sql
     - store_sales_order_detail.sql
     - store_sales_order_header.sql
 tests:
-  silver: "airflow_dbt/include/dbt/models/docs/silver"
+  silver: "airflow_dbt/data/dbt/models/docs/silver"
     - store_products.yml
     - store_sales_order_detail.yml
     - store_sales_order_header.yml
@@ -309,11 +309,11 @@ FROM {{ ref('raw_sales_order_header') }}
 File path of the models and tests related to these models inside the Github project:
 ```yaml
 models:
-  gold: "airflow_dbt/include/dbt/models/gold"
+  gold: "airflow_dbt/data/dbt/models/gold"
     - publish_orders.sql
     - publish_products.sql
 tests:
-  silver: "airflow_dbt/include/dbt/models/docs/gold"
+  silver: "airflow_dbt/data/dbt/models/docs/gold"
     - publish_orders.yml
     - publish_products.yml
 ```
@@ -419,7 +419,7 @@ FROM {{ ref('store_products') }}
 #### File Paths Configuration
 ```yaml
 models:
-  datamart: "airflow_dbt/include/dbt/models/datamart"
+  datamart: "airflow_dbt/data/dbt/models/datamart"
     - avg_lead_time_prod_category.sql
     - color_with_highest_reven_year.sql
 ```

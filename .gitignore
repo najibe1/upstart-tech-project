@@ -11,10 +11,10 @@ airflow.cfg
 airflow.db
 service_account.json
 *.db
-airflow_dbt/include/dbt/target
-airflow_dbt/include/dbt/logs
-airflow_dbt/include/dbt/.user.yml
-airflow_dbt/include/dbt/package-lock.yml
+airflow_dbt/data/dbt/target
+airflow_dbt/data/dbt/logs
+airflow_dbt/data/dbt/.user.yml
+airflow_dbt/data/dbt/package-lock.yml
 terraform/infra/service_account_terraform.json
 airflow_dbt/.astro/config.yaml
 logs

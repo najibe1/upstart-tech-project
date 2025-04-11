@@ -20,6 +20,7 @@ jobs:
           service_account_key: ${{ secrets.GCP_SA_KEY }}
           export_default_credentials: true
 
-      - name: Deploy DAGs to Composer GCS bucket
+      - name: Deploy DAGs and data folders to Composer GCS bucket
         run: |
           gsutil cp airflow_dbt/dags/*.py gs://composer-upstart/dags
+          gsutil -m cp -r airflow_dbt/data gs://composer-upstart/data
