@@ -1,3 +1,12 @@
+import os 
+import sys 
+
+
+if os.environ.get("ENV_TYPE") == "LOCAL":
+    sys.path.append(os.path.abspath("."))
+else:
+    sys.path.append("/home/airflow/gcs/")
+
 from airflow.decorators import dag, task
 from datetime import datetime, timedelta
 from data.dbt.cosmos_config import DBT_PROJECT_CONFIG, DBT_CONFIG
@@ -7,6 +16,8 @@ from cosmos.config import ProjectConfig, RenderConfig
 from airflow.operators.dummy import DummyOperator
 from airflow.providers.google.cloud.transfers.s3_to_gcs import S3ToGCSOperator
 from airflow.utils.task_group import TaskGroup
+
+
 
 @dag(
     start_date=datetime(2024, 7, 24),
