@@ -24,3 +24,4 @@ jobs:
         run: |
           gsutil cp airflow_dbt/dags/*.py gs://composer-upstart/dags
           gsutil -m cp -r airflow_dbt/data/* gs://composer-upstart/data
+          gsutil -m cp -r airflow_dbt/plugins/* gs://composer-upstart/plugins
