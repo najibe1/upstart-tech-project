@@ -1,4 +1,4 @@
-# Upstart Client Technical Project Documentation
+# Project Documentation
 
 ## Project Overview
 This project implements a complete data pipeline that extracts raw data from AWS S3, transforms it through a medallion architecture in Google Cloud Platform, and delivers analytical insights via BigQuery. The solution leverages Terraform for infrastructure, Airflow for orchestration, and DBT for transformation.
